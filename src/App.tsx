@@ -1,19 +1,39 @@
+import "./custom.scss";
+import github from "./db";
+import { useEffect, useState } from "react";
+
 function App() {
+  const [userName, setUserName] = useState<string>("");
+
+  useEffect(() => {
+    const githubQuery = {
+      query: `
+      {
+        viewer {
+          name
+        }
+      }
+    `,
+    };
+
+    fetch(github.baseURL, {
+      method: "POST",
+      headers: github.headers,
+      body: JSON.stringify(githubQuery),
+    })
+      .then((response) => response.json())
+      .then((data) => setUserName(data.data.viewer.name))
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App container mt-5">
+      <h1 className="text-primary">
+        <i className="bi bi-diagram-2-fill">Repos</i>
+      </h1>
+      <p>Hey there, {userName}</p>
     </div>
   );
 }
