@@ -1,21 +1,12 @@
 import "./custom.scss";
 import github from "./db";
 import { useEffect, useState } from "react";
+import githubQuery from "./Query";
 
 function App() {
   const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
-    const githubQuery = {
-      query: `
-      {
-        viewer {
-          name
-        }
-      }
-    `,
-    };
-
     fetch(github.baseURL, {
       method: "POST",
       headers: github.headers,
