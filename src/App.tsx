@@ -17,7 +17,6 @@ function App() {
       .then((data) => {
         const viewer = data.data.viewer;
         setUserName(viewer.name);
-        console.log(viewer.repositories.edges);
         setRepoList(viewer.repositories.edges);
       })
       .catch((error) => {
