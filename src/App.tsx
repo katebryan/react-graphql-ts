@@ -2,6 +2,7 @@ import "./custom.scss";
 import { useEffect, useState, useCallback } from "react";
 import github from "./db";
 import githubQuery from "./Query";
+import RepoInfo from "./RepoInfo";
 
 function App() {
   const [userName, setUserName] = useState<string>("");
@@ -16,8 +17,9 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         const viewer = data.data.viewer;
+        const repos = data.data.search.nodes;
         setUserName(viewer.name);
-        setRepoList(viewer.repositories.edges);
+        setRepoList(repos);
       })
       .catch((error) => {
         console.log(error);
@@ -37,12 +39,13 @@ function App() {
       {repoList && (
         <ul className="list-group list-group-flush">
           {repoList.map((repo) => (
-            <li className="list-group-item" key={repo.node.id.toString()}>
-              <a className="h5 mb-0 text-decoration-none" href={repo.node.url}>
-                {repo.node.name}
-              </a>
-              <p className="small">{repo.node.description}</p>
-            </li>
+            <RepoInfo
+              key={repo.id}
+              id={repo.id}
+              name={repo.name}
+              url={repo.url}
+              description={repo.description}
+            />
           ))}
         </ul>
       )}
