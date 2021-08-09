@@ -7,24 +7,31 @@ import RepoInfo from "./RepoInfo";
 function App() {
   const [userName, setUserName] = useState<string>("");
   const [repoList, setRepoList] = useState<any[]>([]);
+  const [pageCount, setPageCount] = useState(10);
+  const [queryString, setQueryString] = useState("vue");
+  const [totalCount, setTotalCount] = useState(null);
 
   const fetchData = useCallback(() => {
+    const queryText = JSON.stringify(githubQuery(pageCount, queryString));
+
     fetch(github.baseURL, {
       method: "POST",
       headers: github.headers,
-      body: JSON.stringify(githubQuery),
+      body: queryText,
     })
       .then((response) => response.json())
       .then((data) => {
         const viewer = data.data.viewer;
         const repos = data.data.search.nodes;
+        const total = data.data.search.repositoryCount;
         setUserName(viewer.name);
         setRepoList(repos);
+        setTotalCount(total);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [pageCount, queryString]);
 
   useEffect(() => {
     fetchData();
@@ -36,6 +43,11 @@ function App() {
         <i className="bi bi-diagram-2-fill">Repos</i>
       </h1>
       <p>Hey there, {userName}</p>
+      <p>
+        <b>Search for: </b> {queryString} | <b>Items per page: </b>
+        {pageCount} | <b>Total results: </b>
+        {totalCount}
+      </p>
       {repoList && (
         <ul className="list-group list-group-flush">
           {repoList.map((repo) => (
