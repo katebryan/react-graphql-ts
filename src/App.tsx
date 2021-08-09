@@ -1,15 +1,16 @@
 import "./custom.scss";
 import { useEffect, useState, useCallback } from "react";
 import github from "./db";
-import githubQuery from "./Query";
+import { githubQuery } from "./Query";
 import RepoInfo from "./RepoInfo";
+import SearchBox from "./SearchBox";
 
 function App() {
   const [userName, setUserName] = useState<string>("");
   const [repoList, setRepoList] = useState<any[]>([]);
-  const [pageCount, setPageCount] = useState(10);
-  const [queryString, setQueryString] = useState("vue");
-  const [totalCount, setTotalCount] = useState(null);
+  const [pageCount, setPageCount] = useState<string>("10");
+  const [queryString, setQueryString] = useState("");
+  const [totalCount, setTotalCount] = useState("1");
 
   const fetchData = useCallback(() => {
     const queryText = JSON.stringify(githubQuery(pageCount, queryString));
@@ -43,11 +44,13 @@ function App() {
         <i className="bi bi-diagram-2-fill">Repos</i>
       </h1>
       <p>Hey there, {userName}</p>
-      <p>
-        <b>Search for: </b> {queryString} | <b>Items per page: </b>
-        {pageCount} | <b>Total results: </b>
-        {totalCount}
-      </p>
+      <SearchBox
+        totalCount={totalCount}
+        pageCount={pageCount}
+        queryString={queryString}
+        onQueryChange={(myString) => setQueryString(myString)}
+        onTotalChange={(newTotal) => setPageCount(newTotal)}
+      />
       {repoList && (
         <ul className="list-group list-group-flush">
           {repoList.map((repo) => (

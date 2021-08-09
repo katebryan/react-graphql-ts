@@ -1,4 +1,4 @@
-const githubQuery = (pageCount: number, queryString: string) => {
+export const githubQuery = (pageCount: string, queryString: string) => {
   return {
     query: `
     {
@@ -21,7 +21,7 @@ const githubQuery = (pageCount: number, queryString: string) => {
   };
 };
 
-const searchGithubQuery = {
+export const searchGithubQuery = {
   query: `
     {
       viewer {
@@ -41,7 +41,7 @@ const searchGithubQuery = {
     `,
 };
 
-const githubPaginatedQuery = {
+export const githubPaginatedQuery = {
   query: `{
         viewer {
           name
@@ -60,5 +60,3 @@ const githubPaginatedQuery = {
       }
       `,
 };
-
-export default githubQuery;
