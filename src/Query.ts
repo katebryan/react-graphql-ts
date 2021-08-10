@@ -11,6 +11,7 @@ export const paginatedGithubQuery = (
         name
       }
       search(query: "${queryString} user:katebry sort:updated-desc", type: REPOSITORY, ${paginationKeyword}: ${pageCount}, ${paginationString}) {
+        repositoryCount
         edges {
           cursor
           node {
