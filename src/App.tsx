@@ -4,6 +4,7 @@ import github from "./db";
 import { paginatedGithubQuery } from "./Query";
 import RepoInfo from "./RepoInfo";
 import SearchBox from "./SearchBox";
+import NavButtons from "./NavButtons";
 
 function App() {
   const [userName, setUserName] = useState<string>("");
@@ -73,6 +74,16 @@ function App() {
         queryString={queryString}
         onQueryChange={(myString) => setQueryString(myString)}
         onTotalChange={(newTotal) => setPageCount(newTotal)}
+      />
+      <NavButtons
+        start={startCursor}
+        end={endCursor}
+        next={hasNextPage}
+        previous={hasPreviousPage}
+        onPage={(myKeyword, myString) => {
+          setPaginationKeyword(myKeyword);
+          setPaginationString(myString);
+        }}
       />
       {repoList && (
         <ul className="list-group list-group-flush">
