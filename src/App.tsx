@@ -37,7 +37,6 @@ function App() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         const viewer = data.data.viewer;
         const repos = data.data.search.edges;
         const total = data.data.search.repositoryCount;
@@ -89,7 +88,6 @@ function App() {
         <ul className="list-group list-group-flush">
           {repoList.map((repo) => (
             <>
-              {console.log(repo.node, "*****")}
               <RepoInfo
                 key={repo.node.id}
                 id={repo.node.id}
