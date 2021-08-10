@@ -1,3 +1,38 @@
+export const paginatedGithubQuery = (
+  pageCount: string,
+  queryString: string,
+  paginationKeyword: string,
+  paginationString: string
+) => {
+  return {
+    query: `
+    {
+      viewer {
+        name
+      }
+      search(query: "${queryString} user:katebry sort:updated-desc", type: REPOSITORY, ${paginationKeyword}: ${pageCount}, ${paginationString}) {
+        edges {
+          cursor
+          node {
+            ... on Repository {
+              name
+              description
+              id
+              url
+            }
+          }
+        }
+        pageInfo {
+          startCursor
+          endCursor
+          hasNextPage
+          hasPreviousPage
+        }
+      }
+    }`,
+  };
+};
+
 export const githubQuery = (pageCount: string, queryString: string) => {
   return {
     query: `

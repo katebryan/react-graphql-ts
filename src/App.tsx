@@ -1,7 +1,7 @@
 import "./custom.scss";
 import { useEffect, useState, useCallback } from "react";
 import github from "./db";
-import { githubQuery } from "./Query";
+import { paginatedGithubQuery } from "./Query";
 import RepoInfo from "./RepoInfo";
 import SearchBox from "./SearchBox";
 
@@ -12,8 +12,22 @@ function App() {
   const [queryString, setQueryString] = useState("");
   const [totalCount, setTotalCount] = useState("1");
 
+  const [startCursor, setStartCursor] = useState(null);
+  const [endCursor, setEndCursor] = useState(null);
+  const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [paginationKeyword, setPaginationKeyword] = useState("first");
+  const [paginationString, setPaginationString] = useState("");
+
   const fetchData = useCallback(() => {
-    const queryText = JSON.stringify(githubQuery(pageCount, queryString));
+    const queryText = JSON.stringify(
+      paginatedGithubQuery(
+        pageCount,
+        queryString,
+        paginationKeyword,
+        paginationString
+      )
+    );
 
     fetch(github.baseURL, {
       method: "POST",
@@ -22,17 +36,26 @@ function App() {
     })
       .then((response) => response.json())
       .then((data) => {
-        const viewer = data.data.viewer;
-        const repos = data.data.search.nodes;
+        console.log(data);
+        // const viewer = data.data.viewer;
+        const repos = data.data.search.edges;
         const total = data.data.search.repositoryCount;
-        setUserName(viewer.name);
+        const start = data.data.search.pageInfo?.startCursor;
+        const end = data.data.search.pageInfo?.endCursor;
+        const next = data.data.search.pageInfo?.hasNextPage;
+        const prev = data.data.search.pageInfo?.hasPreviousPage;
+        // setUserName(viewer.name);
         setRepoList(repos);
         setTotalCount(total);
+        setStartCursor(start);
+        setEndCursor(end);
+        setHasNextPage(next);
+        setHasPreviousPage(prev);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [pageCount, queryString]);
+  }, [pageCount, queryString, paginationString, paginationKeyword]);
 
   useEffect(() => {
     fetchData();
@@ -54,13 +77,16 @@ function App() {
       {repoList && (
         <ul className="list-group list-group-flush">
           {repoList.map((repo) => (
-            <RepoInfo
-              key={repo.id}
-              id={repo.id}
-              name={repo.name}
-              url={repo.url}
-              description={repo.description}
-            />
+            <>
+              {console.log(repo.node, "*****")}
+              <RepoInfo
+                key={repo.node.id}
+                id={repo.node.id}
+                name={repo.node.name}
+                url={repo.node.url}
+                description={repo.node.description}
+              />
+            </>
           ))}
         </ul>
       )}
